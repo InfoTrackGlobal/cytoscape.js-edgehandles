@@ -53,7 +53,18 @@ SOFTWARE.
         return this;
       },
       trigger: function(eventName){
-        var evt = new Event(eventName);
+
+        function CustomEvent ( event, params ) {
+          params = params || { bubbles: false, cancelable: false, detail: undefined };
+          var evt = document.createEvent( 'CustomEvent' );
+          evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+          return evt;
+        }
+
+        CustomEvent.prototype = window.Event.prototype;
+
+        //indow.CustomEvent = CustomEvent;
+        var evt = new CustomEvent(eventName);
 
         this[0].dispatchEvent(evt);
 
@@ -495,7 +506,7 @@ SOFTWARE.
           if( value === undefined ) {
             if( typeof name == typeof {} ) {
               var newOpts = name;
-              options =Object.assign( {}, defaults, newOpts );
+              options = jQuery.extend( {}, defaults, newOpts );
               data.options = options;
             } else {
               return options[ name ];
@@ -541,7 +552,7 @@ SOFTWARE.
 
         init: function() {
           var self = this;
-          var opts = Object.assign({}, defaults, params );
+          var opts = jQuery.extend({}, defaults, params );
           var $container = $( this );
           var canvas = document.createElement('canvas');
           var $canvas = $(canvas);
@@ -885,12 +896,12 @@ SOFTWARE.
                     };
                   }
 
-                  var interNode = cy.add( Object.assign( {
+                  var interNode = cy.add( jQuery.extend( {
                     group: 'nodes',
                     position: p
                   }, options().nodeParams( source, target ) ) ).addClass( classes );
 
-                  var source2inter = cy.add( Object.assign( {
+                  var source2inter = cy.add( jQuery.extend( {
                     group: 'edges',
                     data: {
                       source: source.id(),
@@ -898,7 +909,7 @@ SOFTWARE.
                     }
                   }, options().edgeParams( source, target, 0 ) ) ).addClass( classes );
 
-                  var inter2target = cy.add( Object.assign( {
+                  var inter2target = cy.add( jQuery.extend( {
                     group: 'edges',
                     data: {
                       source: interNode.id(),
